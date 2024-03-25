@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 
     std::string prefix{"32'"};
 
-    switch (static_cast<Format>(rand() % 2)) {
+    switch (static_cast<Format>(rand() % 4)) {
       case Format::hex: std::cout << prefix << "h" << std::hex << el << ' '; break;
       case Format::oct: std::cout << prefix << "o" << std::oct << el << ' '; break;
       case Format::bin: {
