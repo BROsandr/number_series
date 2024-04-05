@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 
+#include <compare>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -9,52 +10,48 @@
 #include <utility>
 #include <bitset>
 
-template <typename T>
+using std::to_string;
+template <typename T> requires std::three_way_comparable<T> && requires (T t) {to_string(t);}
 struct Min_max {
-  constexpr Min_max(T min, T max) {
-    set_min(min);
-    set_max(max);
-  }
-
   constexpr Min_max &set_max(T value) {
     m_max = value;
-    check_range();
     return *this;
   }
 
   constexpr Min_max &set_min(T value) {
     m_min = value;
-    check_range();
     return *this;
   }
 
   constexpr T get_min() const {
+    check_range();
     return m_min;
   }
 
   constexpr T get_max() const {
+    check_range();
     return m_max;
   }
 
-  private:
-    constexpr void check_range() const {
-      using namespace std;
-      if (get_max() <= get_min()) {
-        throw Errors::Error{
-            "Min_max: (max==" + to_string(get_max()) + ") <= (min==" + to_string(get_min()) + ")"
-        };
-      }
+  constexpr void check_range() const {
+    using namespace std;
+    if (m_max <= m_min) {
+      throw Errors::Error{
+          "Min_max: (max==" + to_string(m_max) + ") <= (min==" + to_string(m_min) + ")."
+      };
     }
+  }
 
-  T m_min{};
-  T m_max{};
+  private:
+    T m_min{};
+    T m_max{};
 };
 
 template <typename T>
 std::vector<T> series(T number, Min_max<unsigned int> number_of_steps) {
   std::vector<T> result{};
 
-  unsigned int step_number{(static_cast<unsigned int>(rand()) % (number_of_steps.max - number_of_steps.min)) + number_of_steps.min};
+  unsigned int step_number{(static_cast<unsigned int>(rand()) % (number_of_steps.get_max() - number_of_steps.get_min())) + number_of_steps.get_min()};
 
   for (unsigned int i{0}; i < step_number - 1; ++i) {
     result.push_back(rand());
@@ -87,21 +84,23 @@ std::pair<int, Min_max<unsigned int>> handle_args(int argc, char **argv) {
   Min_max<unsigned int> number_of_steps{};
 
   try {
-    number_of_steps.min = std::stoul(argv[2]);
+    number_of_steps.set_min(std::stoul(argv[2]));
   }
   catch (...) {
     throw Errors::Arg_error{"Failed to retrieve the argument <min_number_of_steps>.", {1}};
   }
 
   try {
-    number_of_steps.max = std::stoul(argv[3]);
+    number_of_steps.set_max(std::stoul(argv[3]));
   }
   catch (...) {
     throw Errors::Arg_error{"Failed to retrieve the argument <max_number_of_steps>.", {2}};
   }
 
-  if (static_cast<number_of_steps.max - number_of_steps.min <= 0) {
-    throw Errors::Arg_error{"<max_number_of_steps> must be larger than <min_number_of_steps>.", {1, 2}};
+  try {
+    number_of_steps.check_range();
+  } catch (const Errors::Error &error) {
+    throw Errors::Arg_error{error.what(), {1, 2}};
   }
 
   return {number, number_of_steps};
