@@ -51,7 +51,7 @@ template <typename T>
 std::vector<T> series(T number, Min_max<unsigned int> number_of_steps) {
   std::vector<T> result{};
 
-  unsigned int step_number{(static_cast<unsigned int>(rand()) % (number_of_steps.get_max() - number_of_steps.get_min())) + number_of_steps.get_min()};
+  const unsigned int step_number{(static_cast<unsigned int>(rand()) % (number_of_steps.get_max() - number_of_steps.get_min())) + number_of_steps.get_min()};
 
   for (unsigned int i{0}; i < step_number - 1; ++i) {
     result.push_back(rand());
@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
   int                   number{};
   Min_max<unsigned int> number_of_steps{};
   try {
-    auto handler_result = handle_args(argc, argv);
+    const auto &handler_result = handle_args(argc, argv);
     number          = handler_result.first;
     number_of_steps = handler_result.second;
   } catch (const Errors::Arg_error &error) {
@@ -121,9 +121,9 @@ int main(int argc, char **argv) {
 
   srand(0);
 
-  auto result = series<int>(number, number_of_steps);
+  const auto &result = series<int>(number, number_of_steps);
 
-  for (auto &el : result) {
+  for (const auto &el : result) {
 
     enum class Format {
       hex,
