@@ -1,8 +1,9 @@
+#!/usr/bin/env python3
+
 from dataclasses import dataclass
 import sys
 import subprocess
 import pathlib
-import os
 
 number_series_path = pathlib.Path('./build/number_series.exe')
 plusser_path       = pathlib.Path('./plusser.py')
