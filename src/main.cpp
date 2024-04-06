@@ -122,7 +122,7 @@ int main(int argc, char **argv) {
 
   srand(static_cast<unsigned int>(time(0)));
 
-  const auto &result = series<int>(number, number_of_steps);
+  const auto &result = series<unsigned int>(number, number_of_steps);
 
   for (const auto &el : result) {
 
