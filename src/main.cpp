@@ -1,6 +1,7 @@
 #include "errors.hpp"
 
 #include <cstdlib>
+#include <ctime>
 
 #include <compare>
 #include <iostream>
@@ -119,7 +120,7 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  srand(0);
+  srand(static_cast<unsigned int>(time(0)));
 
   const auto &result = series<int>(number, number_of_steps);
 
