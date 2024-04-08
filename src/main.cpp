@@ -89,7 +89,7 @@ std::vector<T> series(T number, Min_max<unsigned int> number_of_steps, Op op) {
   const unsigned int step_number{(static_cast<unsigned int>(rand()) % (number_of_steps.get_max() - number_of_steps.get_min())) + number_of_steps.get_min()};
 
   for (unsigned int i{0}; i < step_number - 1; ++i) {
-    result.push_back(rand());
+    result.push_back(static_cast<T>(rand()));
   }
 
   result.push_back(calculate_last_in_series<T>(number, result, op));
@@ -176,7 +176,7 @@ int main(int argc, char **argv) {
 
   srand(static_cast<unsigned int>(time(0)));
 
-  const auto &result = series<unsigned int>(number, number_of_steps, op);
+  const auto &result = series<unsigned int>(static_cast<unsigned int>(number), number_of_steps, op);
 
   for (const auto &el : result) {
 
