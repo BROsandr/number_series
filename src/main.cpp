@@ -98,9 +98,9 @@ std::vector<T> series(T number, Min_max<unsigned int> number_of_steps, Op op) {
 }
 
 void print_help() {
-  std::cout << "help: program <number> <min_number_of_steps> <max_number_of_steps> <op>" << std::endl
+  std::cout << "help: program <number> <min_number_of_steps> <max_number_of_steps> [<op>]" << std::endl
             << "  " << "Range: [<min_number_of_steps>, <max_number_of_steps>)" << std::endl
-            << "  " << "<op> is one of: add, xor" << std::endl;
+            << "  " << "<op> is one of: add, xor. The default is add." << std::endl;
 }
 
 struct Args {
@@ -110,7 +110,8 @@ struct Args {
 };
 
 Args handle_args(const std::span<char*> &args) {
-  if (args.size() != 5) {
+  const bool is_op_absent{args.size() == 4};
+  if ((args.size() != 5) && !is_op_absent) {
     throw Errors::Arg_error{"Not enough arguments."};
   }
 
@@ -144,10 +145,14 @@ Args handle_args(const std::span<char*> &args) {
       {"xor", Op::op_xor},
       {"add", Op::op_add},
   };
-  try {
-    op = op_map.at(args[4]);
-  } catch (...) {
-    throw Errors::Arg_error{"Failed to retrieve the argument <op>.", {3}};
+  if (is_op_absent) {
+    op = Op::op_add;
+  } else {
+    try {
+      op = op_map.at(args[4]);
+    } catch (...) {
+      throw Errors::Arg_error{"Failed to retrieve the argument <op>.", {3}};
+    }
   }
 
   try {
