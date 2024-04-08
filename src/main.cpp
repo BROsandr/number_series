@@ -73,6 +73,16 @@ op_func<T> to_func(Op op) {
 }
 
 template <typename T>
+T calculate_last_in_series(T number, const std::span<T> series, Op op) {
+  switch (op) {
+    case Op::op_add: return number - std::accumulate(series.begin(), series.end(), static_cast<T>(0), to_func<T>(op));
+    case Op::op_xor: return number ^ std::accumulate(series.begin(), series.end(), static_cast<T>(0), to_func<T>(op));
+  }
+
+  assert(0 && "Some unhandled op encountered.");
+}
+
+template <typename T>
 std::vector<T> series(T number, Min_max<unsigned int> number_of_steps, Op op) {
   std::vector<T> result{};
 
@@ -82,7 +92,7 @@ std::vector<T> series(T number, Min_max<unsigned int> number_of_steps, Op op) {
     result.push_back(rand());
   }
 
-  result.push_back(number - std::accumulate(result.begin(), result.end(), 0));
+  result.push_back(calculate_last_in_series<T>(number, result, op));
 
   return result;
 }
