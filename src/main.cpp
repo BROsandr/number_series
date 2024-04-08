@@ -13,6 +13,7 @@
 #include <bitset>
 #include <map>
 #include <functional>
+#include <string_view>
 
 using std::to_string;
 template <typename T> requires std::three_way_comparable<T> && requires (T t) {to_string(t);}
@@ -128,12 +129,12 @@ Args handle_args(int argc, char **argv) {
   }
 
   Op op{};
+  const std::map<std::string_view, Op> op_map{
+      {"xor", Op::op_xor},
+      {"add", Op::op_add},
+  };
   try {
-    std::map<std::string_view, Op> op_map{
-        {"xor", Op::op_xor},
-        {"add", Op::op_add},
-    };
-    op = op_map[argv[4]];
+    op = op_map.at(argv[4]);
   } catch (...) {
     throw Errors::Arg_error{"Failed to retrieve the argument <op>.", {3}};
   }
