@@ -14,6 +14,7 @@
 #include <map>
 #include <functional>
 #include <string_view>
+#include <span>
 
 using std::to_string;
 template <typename T> requires std::three_way_comparable<T> && requires (T t) {to_string(t);}
@@ -98,15 +99,15 @@ struct Args {
   Op                    op{};
 };
 
-Args handle_args(int argc, char **argv) {
-  if (argc != 5) {
+Args handle_args(const std::span<char*> &args) {
+  if (args.size() != 5) {
     throw Errors::Arg_error{"Not enough arguments."};
   }
 
   int number{};
 
   try {
-    number = std::stoi(argv[1]);
+    number = std::stoi(args[1]);
   }
   catch (...) {
     throw Errors::Arg_error{"Failed to retrieve the argument <number>.", {0}};
@@ -115,14 +116,14 @@ Args handle_args(int argc, char **argv) {
   Min_max<unsigned int> number_of_steps{};
 
   try {
-    number_of_steps.set_min(std::stoul(argv[2]));
+    number_of_steps.set_min(std::stoul(args[2]));
   }
   catch (...) {
     throw Errors::Arg_error{"Failed to retrieve the argument <min_number_of_steps>.", {1}};
   }
 
   try {
-    number_of_steps.set_max(std::stoul(argv[3]));
+    number_of_steps.set_max(std::stoul(args[3]));
   }
   catch (...) {
     throw Errors::Arg_error{"Failed to retrieve the argument <max_number_of_steps>.", {2}};
@@ -134,7 +135,7 @@ Args handle_args(int argc, char **argv) {
       {"add", Op::op_add},
   };
   try {
-    op = op_map.at(argv[4]);
+    op = op_map.at(args[4]);
   } catch (...) {
     throw Errors::Arg_error{"Failed to retrieve the argument <op>.", {3}};
   }
@@ -153,7 +154,7 @@ int main(int argc, char **argv) {
   Min_max<unsigned int> number_of_steps{};
   Op                    op{};
   try {
-    const auto &handler_result = handle_args(argc, argv);
+    const auto &handler_result = handle_args(std::span<char*>{argv, static_cast<std::size_t>(argc)});
     number          = handler_result.number;
     number_of_steps = handler_result.number_of_steps;
     op              = handler_result.op;
