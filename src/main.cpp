@@ -112,7 +112,7 @@ struct Args {
 Args handle_args(const std::span<char*> &args) {
   const bool is_op_absent{args.size() == 4};
   if ((args.size() != 5) && !is_op_absent) {
-    throw Errors::Arg_error{"Not enough arguments."};
+    throw Errors::Arg_error{"Wrong number of arguments."};
   }
 
   int number{};
