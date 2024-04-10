@@ -1,7 +1,6 @@
 #include "errors.hpp"
 
 #include <cstdlib>
-#include <ctime>
 #include <cassert>
 
 #include <compare>
@@ -15,6 +14,7 @@
 #include <functional>
 #include <string_view>
 #include <span>
+#include <random>
 
 using std::to_string;
 template <typename T> requires std::three_way_comparable<T> && requires (T t) {to_string(t);}
@@ -72,6 +72,12 @@ op_func<T> to_func(Op op) {
   assert(0 && "Some unhandled op encountered.");
 }
 
+static std::mt19937::result_type get_rand() {
+  static std::random_device rd{};   // a seed source for the random number engine
+  static std::mt19937 gen{rd()};
+  return gen();
+}
+
 template <typename T>
 T calculate_last_in_series(T number, const std::span<T> series, Op op) {
   switch (op) {
@@ -86,10 +92,10 @@ template <typename T>
 std::vector<T> series(T number, Min_max<unsigned int> number_of_steps, Op op) {
   std::vector<T> result{};
 
-  const unsigned int step_number{(static_cast<unsigned int>(rand()) % (number_of_steps.get_max() - number_of_steps.get_min())) + number_of_steps.get_min()};
+  const unsigned int step_number{(static_cast<unsigned int>(get_rand()) % (number_of_steps.get_max() - number_of_steps.get_min())) + number_of_steps.get_min()};
 
   for (unsigned int i{0}; i < step_number - 1; ++i) {
-    result.push_back(static_cast<T>(rand()));
+    result.push_back(static_cast<T>(get_rand()));
   }
 
   result.push_back(calculate_last_in_series<T>(number, result, op));
@@ -179,8 +185,6 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  srand(static_cast<unsigned int>(time(0)));
-
   const auto &result = series<unsigned int>(static_cast<unsigned int>(number), number_of_steps, op);
 
   for (const auto &el : result) {
@@ -194,7 +198,7 @@ int main(int argc, char **argv) {
 
     std::string prefix{"32'"};
 
-    switch (static_cast<Format>(rand() % 4)) {
+    switch (static_cast<Format>(get_rand() % 4)) {
       case Format::hex: std::cout << prefix << "h" << std::hex << el << ' '; break;
       case Format::oct: std::cout << prefix << "o" << std::oct << el << ' '; break;
       case Format::bin: {
