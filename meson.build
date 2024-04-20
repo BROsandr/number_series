@@ -50,7 +50,7 @@ foreach file : src_all_files
 endforeach
 
 exe_name = 'number_series'
-executable(exe_name, sources : path_src, include_directories : incdir)
+executable(exe_name, sources : path_src, include_directories : incdir, install: true)
 
 src_standalone_test_files = {
 }
