@@ -1,3 +1,5 @@
-/build/
+build
+result
 !.gitignore
-**/.*/
+**/.*
+nix/sources.nix
