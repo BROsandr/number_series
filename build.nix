@@ -17,7 +17,7 @@ stdenv.mkDerivation {
     fileset = sourceFiles;
   };
 
-  buildInputs = with pkgs; [
+  nativeBuildInputs = with pkgs; [
     meson
     ninja
   ];
