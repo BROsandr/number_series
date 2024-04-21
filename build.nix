@@ -21,4 +21,6 @@ stdenv.mkDerivation {
     meson
     ninja
   ];
+
+  buildInputs = [ ];
 }
