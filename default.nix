@@ -7,7 +7,7 @@ in
 {
   inherit defaultBuild;
   inherit staticBuild;
-  shell = pkgs.mkShellNoCC {
+  shell = pkgs.mkShell {
     inputsFrom = [ defaultBuild ];
     packages = with pkgs; [
       niv
