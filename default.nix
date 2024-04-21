@@ -10,5 +10,7 @@ in
     packages = with pkgs; [
       niv
     ];
+
+    hardeningDisable = ["all"];
   };
 }
