@@ -1,12 +1,14 @@
 { sources ? import ./nix/sources.nix }:
 let
   pkgs = import sources.nixpkgs { config = {}; overlays = []; };
-  build = pkgs.callPackage ./build.nix { };
+  defaultBuild = pkgs.callPackage ./build.nix { };
+  staticBuild = pkgs.callPackage ./build.nix { stdenv = pkgs.pkgsStatic.stdenv; };
 in
 {
-  inherit build;
+  inherit defaultBuild;
+  inherit staticBuild;
   shell = pkgs.mkShellNoCC {
-    inputsFrom = [ build ];
+    inputsFrom = [ defaultBuild ];
     packages = with pkgs; [
       niv
     ];
