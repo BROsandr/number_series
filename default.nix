@@ -5,7 +5,18 @@ let
   releaseBuild = defaultBuild.overrideAttrs (oldAttrs: { mesonBuildType = "release"; });
   debugBuild = defaultBuild.overrideAttrs (oldAttrs: { mesonBuildType = "debug"; });
   staticBuild = releaseBuild.override { stdenv = pkgs.pkgsStatic.stdenv; };
-  winBuild = releaseBuild.override { stdenv = pkgs.pkgsCross.ucrt64.stdenv; };
+  forLinkage = pkgs: drv: {
+    shared = drv.override { stdenv = pkgs.stdenv; };
+    static = drv.override { stdenv = pkgs.pkgsStatic.stdenv; };
+  };
+
+  winBuild   = forLinkage pkgs.pkgsCross.ucrt64 releaseBuild;
+  linuxBuild = forLinkage pkgs                  releaseBuild;
+
+  # sharedBuild = {
+  #   linux = releaseBuild;
+  #   win = releaseBuild.override { stdenv = pkgs.pkgsCross.ucrt64.stdenv; };
+  # };
   shell = pkgs.mkShell {
     inputsFrom = [ defaultBuild ];
     packages = with pkgs; [
@@ -17,5 +28,5 @@ let
   };
 in
 {
-  inherit defaultBuild staticBuild debugBuild shell winBuild;
+  inherit winBuild linuxBuild debugBuild shell;
 }
