@@ -2,13 +2,15 @@
 let
   pkgs = import sources.nixpkgs { config = {}; overlays = []; };
   defaultBuild = pkgs.callPackage ./build.nix { };
-  staticBuild = defaultBuild.override { stdenv = pkgs.pkgsStatic.stdenv; };
-  winBuild = defaultBuild.override { stdenv = pkgs.pkgsCross.ucrt64.stdenv; };
-  debugBuild = defaultBuild.overrideAttrs (oldAttrs: { buildInputs = oldAttrs.buildInputs ++ [pkgs.gdb]; });
+  releaseBuild = defaultBuild.overrideAttrs (oldAttrs: { mesonBuildType = "release"; });
+  debugBuild = defaultBuild.overrideAttrs (oldAttrs: { mesonBuildType = "debug"; });
+  staticBuild = releaseBuild.override { stdenv = pkgs.pkgsStatic.stdenv; };
+  winBuild = releaseBuild.override { stdenv = pkgs.pkgsCross.ucrt64.stdenv; };
   shell = pkgs.mkShell {
     inputsFrom = [ defaultBuild ];
     packages = with pkgs; [
       niv
+      pkgs.gdb
     ];
 
     hardeningDisable = ["all"];
