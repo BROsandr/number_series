@@ -1,7 +1,26 @@
-{ sources ? import ./nix/sources.nix }:
-let
-  all_builds = (import ./all_builds.nix) { inherit sources; };
-in
 {
-  inherit (all_builds.linuxBuild) shared;
+  lib,
+  stdenv,
+  pkgs,
+}:
+let
+  fs = lib.fileset;
+  sourceFiles = fs.unions [./src ./inc ./meson.build];
+in
+
+stdenv.mkDerivation {
+  pname = "number_series";
+  version = "v1.3.0";
+
+  src = fs.toSource {
+    root = ./.;
+    fileset = sourceFiles;
+  };
+
+  nativeBuildInputs = with pkgs; [
+    meson
+    ninja
+  ];
+
+  buildInputs = [ ];
 }

@@ -1,7 +1,7 @@
 { sources ? import ./nix/sources.nix }:
 let
   pkgs = import sources.nixpkgs { config = {}; overlays = []; };
-  defaultBuild = pkgs.callPackage ./build.nix { };
+  defaultBuild = pkgs.callPackage ./. { };
   releaseBuild = defaultBuild.overrideAttrs (oldAttrs: { mesonBuildType = "release"; });
   debugBuild = let
     mkDebug = pkgs: build:
@@ -54,5 +54,5 @@ let
   };
 in
 {
-  inherit winBuild linuxBuild debugBuild shell;
+  inherit defaultBuild winBuild linuxBuild debugBuild shell;
 }
