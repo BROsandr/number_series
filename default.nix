@@ -44,7 +44,7 @@ let
   linuxBuild      = forLinkage pkgs                  releaseBuild;
 
   shell = pkgs.mkShell {
-    inputsFrom = [ defaultBuild ];
+    inputsFrom = [ debugBuild ];
     packages = with pkgs; [
       niv
       pkgs.gdb
