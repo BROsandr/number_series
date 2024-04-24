@@ -51,6 +51,15 @@ let
       clang-tools
     ];
 
+    shellHook = ''
+      eval "
+      setupBuilder() {
+        rm -rf source
+        nix-shell all_builds.nix -A debugBuild --pure
+      }
+      "
+    '';
+
     hardeningDisable = ["all"];
   };
 in
