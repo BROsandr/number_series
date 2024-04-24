@@ -47,7 +47,8 @@ let
     inputsFrom = [ debugBuild ];
     packages = with pkgs; [
       niv
-      pkgs.gdb
+      gdb
+      clang-tools
     ];
 
     hardeningDisable = ["all"];
