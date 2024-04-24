@@ -31,6 +31,7 @@ let
         env.CFLAGS = env.CXXFLAGS;
         dontInstall = true;
         dontFixup = true;
+        hardeningDisable = ["all"];
       });
   in mkDebug pkgs defaultBuild;
   staticBuild = releaseBuild.override { stdenv = pkgs.pkgsStatic.stdenv; };
