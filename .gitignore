@@ -4,4 +4,4 @@ result
 **/.*
 nix/sources.nix
 result-2
-sources/*
+source/*
