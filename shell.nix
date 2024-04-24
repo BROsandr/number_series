@@ -1,1 +1,1 @@
-(import ./. {}).shell
+(import ./all_builds.nix {}).shell
