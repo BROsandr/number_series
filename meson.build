@@ -3,29 +3,6 @@ project('number_series', 'cpp', default_options : ['cpp_std=c++23'])
 incdir = [include_directories('./inc/')]
 catch_dep = []
 
-if (meson.get_compiler('cpp').get_id() in ['g++', 'gcc']) \
-    and get_option('buildtype').startswith('debug')       \
-    and get_option('warning_level') == '3'
-  add_project_arguments([
-    '-Wshadow'
-    ,'-Wformat=2'
-    ,'-Wfloat-equal'
-    ,'-Wconversion'
-    ,'-Wlogical-op'
-    ,'-Wshift-overflow=2'
-    ,'-Wduplicated-cond'
-    ,'-Wcast-qual'
-    ,'-Wcast-align'
-    ,'-D_GLIBCXX_DEBUG'
-    ,'-D_GLIBCXX_DEBUG_PEDANTIC'
-    ,'-D_FORTIFY_SOURCE=2'
-    ,'-fno-sanitize-recover'
-    ,'-fstack-protector'
-    ,'-Wsign-conversion'
-    ,'-Weffc++'
-  ], language : ['cpp'])
-endif
-
 src_unit_test_files = [
 ]
 src_dir = './src/'

@@ -3,7 +3,37 @@ let
   pkgs = import sources.nixpkgs { config = {}; overlays = []; };
   defaultBuild = pkgs.callPackage ./build.nix { };
   releaseBuild = defaultBuild.overrideAttrs (oldAttrs: { mesonBuildType = "release"; });
-  debugBuild = defaultBuild.overrideAttrs (oldAttrs: { mesonBuildType = "debug"; });
+  debugBuild = let
+    mkDebug = pkgs: build:
+      build.overrideAttrs (oldAttrs: rec {
+        mesonBuildType = "debug";
+        mesonFlags = (oldAttrs.mesonFlags or []) ++ (let inherit (pkgs.lib.strings) mesonBool; in [
+          (mesonBool "cpp_debugstl" true)
+          (mesonBool "b_ndebug"     false)
+        ]);
+        env.CXXFLAGS = (oldAttrs.env.CXXFLAGS or "") + (if pkgs.stdenv.cc.isGNU then pkgs.lib.strings.concatStringsSep " " [
+          "-Wshadow"
+          "-Wformat=2"
+          "-Wfloat-equal"
+          "-Wconversion"
+          "-Wlogical-op"
+          "-Wshift-overflow=2"
+          "-Wduplicated-cond"
+          "-Wcast-qual"
+          "-Wcast-align"
+          "-D_GLIBCXX_DEBUG"
+          "-D_GLIBCXX_DEBUG_PEDANTIC"
+          "-D_FORTIFY_SOURCE=2"
+          "-fno-sanitize-recover"
+          "-fstack-protector"
+          "-Wsign-conversion"
+          "-Weffc++"
+        ] else "");
+        env.CFLAGS = env.CXXFLAGS;
+        dontInstall = true;
+        dontFixup = true;
+      });
+  in mkDebug pkgs defaultBuild;
   staticBuild = releaseBuild.override { stdenv = pkgs.pkgsStatic.stdenv; };
   forLinkage = pkgs: drv: {
     shared = drv.override { stdenv = pkgs.stdenv; };
