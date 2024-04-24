@@ -10,13 +10,9 @@ let
     static = drv.override { stdenv = pkgs.pkgsStatic.stdenv; };
   };
 
-  winBuild   = forLinkage pkgs.pkgsCross.ucrt64 releaseBuild;
-  linuxBuild = forLinkage pkgs                  releaseBuild;
+  winBuild.shared = releaseBuild.override { stdenv = pkgs.pkgsCross.ucrt64.stdenv; };
+  linuxBuild      = forLinkage pkgs                  releaseBuild;
 
-  # sharedBuild = {
-  #   linux = releaseBuild;
-  #   win = releaseBuild.override { stdenv = pkgs.pkgsCross.ucrt64.stdenv; };
-  # };
   shell = pkgs.mkShell {
     inputsFrom = [ defaultBuild ];
     packages = with pkgs; [
