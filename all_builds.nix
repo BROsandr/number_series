@@ -7,9 +7,10 @@ let
     mkDebug = pkgs: build:
       build.overrideAttrs (oldAttrs: rec {
         mesonBuildType = "debug";
-        mesonFlags = (oldAttrs.mesonFlags or []) ++ (let inherit (pkgs.lib.strings) mesonBool; in [
-          (mesonBool "cpp_debugstl" true)
-          (mesonBool "b_ndebug"     false)
+        mesonFlags = (oldAttrs.mesonFlags or []) ++ (let inherit (pkgs.lib.strings) mesonBool mesonOption; in [
+          (mesonBool   "cpp_debugstl" true)
+          (mesonBool   "b_ndebug"     false)
+          (mesonOption "b_sanitize"   "address,undefined")
         ]);
         env.CXXFLAGS = (oldAttrs.env.CXXFLAGS or "") + (if pkgs.stdenv.cc.isGNU then pkgs.lib.strings.concatStringsSep " " [
           "-Wshadow"
