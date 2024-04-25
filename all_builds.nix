@@ -50,6 +50,7 @@ let
       niv
       gdb
       clang-tools
+      clang
     ];
 
     shellHook = ''
