@@ -25,7 +25,7 @@ BUILD_DIR?=${PWD}/build
 MESON_EXTRA_CONFIGURE_FLAGS?=
 MESON_BUILD_FLAGS?=
 
-all: clean configure build
+default: clean configure build
 
 CONFIGURE_TIMESTAMP:=${BUILD_DIR}/.configure.timestamp
 
@@ -48,4 +48,4 @@ endif
 clean:
 	rm -rf "${BUILD_DIR}"
 
-.PHONY: all clean build configure
+.PHONY: default clean build configure
