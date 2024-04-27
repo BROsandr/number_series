@@ -12,6 +12,10 @@ let
   winBuild.shared = releaseBuild.override { stdenv = pkgs.pkgsCross.ucrt64.stdenv; };
   linuxBuild      = forLinkage pkgs                  releaseBuild;
 
+  debugBuild = (defaultBuild.override { meson = null; ninja = null; sourceFiles = pkgs.lib.fileset.unions [./src ./inc ./meson.build ./Makefile]; }).overrideAttrs (oldAttrs: {
+    preConfigure = "PATH=${pkgs.meson}/bin:${pkgs.ninja}/bin:$PATH"; }
+  );
+
   shell = pkgs.mkShell {
     inputsFrom = [ defaultBuild ];
     packages = with pkgs; [
@@ -26,5 +30,5 @@ let
   };
 in
 {
-  inherit defaultBuild winBuild linuxBuild shell;
+  inherit defaultBuild winBuild linuxBuild shell debugBuild;
 }

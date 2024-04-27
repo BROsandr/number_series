@@ -2,10 +2,12 @@
   lib,
   stdenv,
   pkgs,
+  meson,
+  ninja,
+  sourceFiles ? lib.fileset.unions [./src ./inc ./meson.build],
 }:
 let
-  fs = lib.fileset;
-  sourceFiles = fs.unions [./src ./inc ./meson.build];
+  fs = pkgs.lib.fileset;
 in
 
 stdenv.mkDerivation {
@@ -17,7 +19,7 @@ stdenv.mkDerivation {
     fileset = sourceFiles;
   };
 
-  nativeBuildInputs = with pkgs; [
+  nativeBuildInputs = [
     meson
     ninja
   ];
