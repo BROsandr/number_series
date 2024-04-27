@@ -24,6 +24,8 @@ MESON_DEBUG_FLAGS?=$(addprefix -D,\
 BUILD_DIR?=${PWD}/build
 MESON_EXTRA_CONFIGURE_FLAGS?=
 MESON_BUILD_FLAGS?=
+out?=${BUILD_DIR}
+PROGRAM_NAME:=number_series
 
 default: clean configure build
 
@@ -45,7 +47,10 @@ else
 	${BUILD_CMD}
 endif
 
+install: build
+	-cp "${BUILD_DIR}/${PROGRAM_NAME}" "${out}/bin/${PROGRAM_NAME}"
+
 clean:
 	rm -rf "${BUILD_DIR}"
 
-.PHONY: default clean build configure
+.PHONY: default clean build configure install
