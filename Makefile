@@ -48,7 +48,8 @@ else
 endif
 
 install: build
-	-cp "${BUILD_DIR}/${PROGRAM_NAME}" "${out}/bin/${PROGRAM_NAME}"
+	mkdir -p "${out}/bin"
+	cp "${BUILD_DIR}/${PROGRAM_NAME}" "${out}/bin"
 
 clean:
 	rm -rf "${BUILD_DIR}"
