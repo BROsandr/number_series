@@ -15,6 +15,14 @@ CC_DEBUG_FLAGS?=\
 		-Wsign-conversion         \
 		-Weffc++                  \
 
+BUILD_TYPE?=debugoptimized
+ifeq (${BUILD_TYPE},debugoptimized)
+  CC_DEBUG_FLAGS+=-D_FORTIFY_SOURCE=1
+else ifeq (${BUILD_TYPE},debug)
+else
+  $(error unknown BUILD_TYPE=${BUILD_TYPE})
+endif
+
 MESON_DEBUG_FLAGS?=$(addprefix -D,\
 		cpp_debugstl=true            \
 		b_ndebug=false               \
@@ -31,7 +39,7 @@ default: clean configure build
 
 CONFIGURE_TIMESTAMP:=${BUILD_DIR}/.configure.timestamp
 
-CONFIGURE_CMD:=meson setup "${BUILD_DIR}" ${MESON_DEBUG_FLAGS} ${MESON_EXTRA_CONFIGURE_FLAGS}
+CONFIGURE_CMD:=meson setup "${BUILD_DIR}" --buildtype "${BUILD_TYPE}" ${MESON_DEBUG_FLAGS} ${MESON_EXTRA_CONFIGURE_FLAGS}
 ${CONFIGURE_TIMESTAMP}:
 	mkdir -p "${BUILD_DIR}"
 	${CONFIGURE_CMD}
