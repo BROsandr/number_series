@@ -49,11 +49,11 @@ configure: clean ${CONFIGURE_TIMESTAMP}
 
 BUILD_CMD:=meson compile -C "${BUILD_DIR}" ${MESON_BUILD_FLAGS}
 build: ${CONFIGURE_TIMESTAMP}
-ifdef ANALYZE
-	scan-build ${BUILD_CMD}
-else
-	${BUILD_CMD}
-endif
+  ifdef ANALYZE
+	  scan-build ${BUILD_CMD}
+  else
+	  ${BUILD_CMD}
+  endif
 
 install: build
 	mkdir -p "${out}/bin"
