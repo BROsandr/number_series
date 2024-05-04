@@ -29,14 +29,13 @@ MESON_DEBUG_FLAGS?=$(addprefix -D,\
 		b_sanitize=address,undefined \
 )	-Dcpp_args="${CC_DEBUG_FLAGS}"
 
-run: \
-	SAN_OPTIONS:=debug=true:verbosity=2\
-	export MALLOC_PERTURB_?=$(shell bash -c 'echo $$RANDOM')\
-	export ASAN_OPTIONS:=${ASAN_OPTIONS}:${SAN_OPTIONS}\
-	export UBSAN_OPTIONS:=${UBSAN_OPTIONS}:${SAN_OPTIONS}\
-	export MSAN_OPTIONS:=${MSAN_OPTIONS}:${SAN_OPTIONS}\
-	export TSAN_OPTIONS:=${TSAN_OPTIONS}:${SAN_OPTIONS}\
-	export LSAN_OPTIONS:=${LSAN_OPTIONS}:${SAN_OPTIONS}\
+run: SAN_OPTIONS:=
+run: export MALLOC_PERTURB_?=$(shell bash -c 'echo $$RANDOM')
+run: export ASAN_OPTIONS:=${ASAN_OPTIONS}:debug=true:${SAN_OPTIONS}
+run: export UBSAN_OPTIONS:=${UBSAN_OPTIONS}:debug=true:${SAN_OPTIONS}
+run: export MSAN_OPTIONS:=${MSAN_OPTIONS}:debug=true:${SAN_OPTIONS}
+run: export TSAN_OPTIONS:=${TSAN_OPTIONS}:debug=true:${SAN_OPTIONS}
+run: export LSAN_OPTIONS:=${LSAN_OPTIONS}:${SAN_OPTIONS}
 
 PROG_ARGV?=
 BUILD_DIR?=${PWD}/build
