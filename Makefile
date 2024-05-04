@@ -29,6 +29,16 @@ MESON_DEBUG_FLAGS?=$(addprefix -D,\
 		b_sanitize=address,undefined \
 )	-Dcpp_args="${CC_DEBUG_FLAGS}"
 
+run: \
+	SAN_OPTIONS:=debug=true:verbosity=2\
+	export MALLOC_PERTURB_?=$(shell bash -c 'echo $$RANDOM')\
+	export ASAN_OPTIONS:=${ASAN_OPTIONS}:${SAN_OPTIONS}\
+	export UBSAN_OPTIONS:=${UBSAN_OPTIONS}:${SAN_OPTIONS}\
+	export MSAN_OPTIONS:=${MSAN_OPTIONS}:${SAN_OPTIONS}\
+	export TSAN_OPTIONS:=${TSAN_OPTIONS}:${SAN_OPTIONS}\
+	export LSAN_OPTIONS:=${LSAN_OPTIONS}:${SAN_OPTIONS}\
+
+PROG_ARGV?=
 BUILD_DIR?=${PWD}/build
 MESON_EXTRA_CONFIGURE_FLAGS?=
 MESON_BUILD_FLAGS?=
@@ -55,11 +65,16 @@ build: ${CONFIGURE_TIMESTAMP}
 	  ${BUILD_CMD}
   endif
 
-install: build
+run: ${BUILD_DIR}/${PROGRAM_NAME}
+	${BUILD_DIR}/${PROGRAM_NAME} ${PROG_ARGV}
+
+${BUILD_DIR}/${PROGRAM_NAME}: build
+
+install: ${BUILD_DIR}/${PROGRAM_NAME}
 	mkdir -p "${out}/bin"
 	cp "${BUILD_DIR}/${PROGRAM_NAME}" "${out}/bin"
 
 clean:
 	rm -rf "${BUILD_DIR}"
 
-.PHONY: default clean build configure install
+.PHONY: default clean build configure install run
