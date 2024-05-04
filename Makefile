@@ -45,30 +45,33 @@ MESON_BUILD_FLAGS?=
 out?=${BUILD_DIR}
 PROGRAM_NAME:=number_series
 
-default: clean configure build
-
 CONFIGURE_TIMESTAMP:=${BUILD_DIR}/.configure.timestamp
 
 CONFIGURE_CMD:=meson setup "${BUILD_DIR}" --buildtype "${BUILD_TYPE}" ${MESON_DEBUG_FLAGS} ${MESON_EXTRA_CONFIGURE_FLAGS}
+BUILD_CMD:=meson compile -C "${BUILD_DIR}" ${MESON_BUILD_FLAGS}
+
+default: clean configure build;
+
 ${CONFIGURE_TIMESTAMP}:
 	mkdir -p "${BUILD_DIR}"
 	${CONFIGURE_CMD}
 	touch "${@}"
 
-configure: clean ${CONFIGURE_TIMESTAMP}
+configure: clean ${CONFIGURE_TIMESTAMP};
 
-BUILD_CMD:=meson compile -C "${BUILD_DIR}" ${MESON_BUILD_FLAGS}
-build: ${CONFIGURE_TIMESTAMP}
+${BUILD_DIR}/${PROGRAM_NAME}: ${CONFIGURE_TIMESTAMP}
   ifdef ANALYZE
 	  scan-build ${BUILD_CMD}
   else
 	  ${BUILD_CMD}
   endif
 
-run: ${BUILD_DIR}/${PROGRAM_NAME}
-	${BUILD_DIR}/${PROGRAM_NAME} ${PROG_ARGV}
+build: ${BUILD_DIR}/${PROGRAM_NAME}
+	rm -f "${<}"
+	$(MAKE) ${BUILD_DIR}/${PROGRAM_NAME}
 
-${BUILD_DIR}/${PROGRAM_NAME}: build
+run: ${BUILD_DIR}/${PROGRAM_NAME}
+	${<} ${PROG_ARGV}
 
 install: ${BUILD_DIR}/${PROGRAM_NAME}
 	mkdir -p "${out}/bin"
